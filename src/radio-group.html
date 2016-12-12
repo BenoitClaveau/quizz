@@ -1,0 +1,75 @@
+<link rel="import" href="my-app.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="radio-group">
+  <template>
+    <style include="shared-styles"></style>
+
+    <div class="card">
+      <div class="circle">[[index]]</div>
+      <h2>[[question]]</h2>
+     
+     <div class="layout vertical">
+       <paper-radio-group selected="{{selected}}">
+          <template is="dom-repeat" items="{{propositions}}">
+            <paper-radio-button name="{{item.id}}">{{item.name}}</paper-radio-button>
+          </template>
+       </paper-radio-group>
+     </div>
+
+     <p></p>
+
+     <div class="layout horizontal flex">
+       <template is="dom-if" if="{{_visible(index)}}">
+         <paper-button raised class="indigo" on-tap="onPrevious">précédent</paper-button>
+       </template>
+       <span class="flex"></span>
+       <paper-button raised class="indigo" on-tap="onNext">suivant</paper-button>
+     </div>
+
+     <paper-dialog id="modal">
+       <p>Votre réponse n'a pas été prise en compte</p>
+       <div class="buttons">
+         <paper-button dialog-confirm autofocus>fermer</paper-button>
+       </div>
+     </paper-dialog>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'radio-group',
+      properties: {
+        selected: String,
+        index: Number,
+        question: String,
+        propositions: Array,
+        response: String,
+        message: String
+      },
+      _visible: function (index) {
+        return index > 1;
+      },
+      onNext: function() {
+        if (this.selected == null) {
+          this.$modal.open();
+          return;
+        }
+
+        var res = this.propositions.filter(function(e) { return e.id == this.selected; }.bind(this));
+        var response = res[0] ? res[0].name : null;
+        this.fire("on-next", {
+          index: this.index,
+          question: this.question,
+          success: this.selected === this.response,
+          response: response,
+          message: this.message
+        });
+      },
+      onPrevious: function() {
+        this.fire("on-previous", {
+          index: this.index
+        });
+      )
+    });
+  </script>
+</dom-module>

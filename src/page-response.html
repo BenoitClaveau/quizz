@@ -1,0 +1,46 @@
+<link rel="import" href="my-app.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="page-response">
+  <template>
+    <style include="shared-styles">
+      .red { color: red;}
+      .green { color: green;}
+    </style>
+
+    <template is="dom-repeat" items="{{data}}">
+      <div class="card">
+        <div class="circle">[[item.index]]</div>
+        <h3>[[item.question]]</h3>
+        <template is="dom-if" if="{{item.success}}">
+            <div>{{item.response}}: <span class="green">Vrai</span></div>
+        </template>
+        <template is="dom-if" if="{{!item.success}}">
+            <div>{{item.response}}: <span class="red">Faux</span></div>
+            <div>{{item.message}}</div>
+        </template>
+      </div>
+     </template>
+
+     <p></p>
+
+     <div class="layout horizontal flex margin-flex">
+        <paper-button raised class="indigo" on-tap="onRestart">recommencer</paper-button>
+     </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'page-response',
+      properties: {
+        data: {
+            type: Array,
+            value: function() {return [];}
+        }
+      },
+      onRestart: function () {
+        this.fire("on-restart", {});
+      }
+    });
+  </script>
+</dom-module>

@@ -1,13 +1,3 @@
-<!--
-@license
-Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
-
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
@@ -20,6 +10,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-style/color.html">
+<link rel="import" href="../bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../bower_components/paper-radio-group/paper-radio-button.html">
+<link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/neon-animation/scale-up-animation.html">
+<link rel="import" href="../bower_components/neon-animation/fade-out-animation.html">
 <link rel="import" href="my-icons.html">
 
 <dom-module id="my-app">
@@ -28,7 +26,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       :host {
         --app-primary-color: #4285f4;
         --app-secondary-color: black;
-
         display: block;
       }
 
@@ -40,44 +37,77 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         --paper-icon-button-ink-color: white;
       }
 
-      .drawer-list {
-        margin: 0 20px;
-      }
-
-      .drawer-list a {
+      .drawer-list div {
         display: block;
-
         padding: 0 16px;
-
         text-decoration: none;
-
         color: var(--app-secondary-color);
-
-        line-height: 40px;
+        line-height: 54px;
       }
 
-      .drawer-list a.iron-selected {
+      .drawer-list div.iron-selected {
         color: black;
-
         font-weight: bold;
+      }
+
+      .drawer-list div i {
+        border-color: #2196f3;
+        display: inline-block;
+        font-style: normal;
+        width: 24px;
+        background: #FFF;
+        border-radius: 50%;
+        text-align: center;
+        height: 24px;
+        vertical-align: middle;
+        line-height: 24px;
+        border: 2px solid #BDBDBD;
+        margin-right: 8px;
+        font-weight: 400;
+      }
+
+      .drawer-list div.iron-selected i {
+        transform: scale(1.25);
+        border-color: #2196f3;
+      }
+
+      .drawer-list div i::before, 
+      .drawer-list div i::after {
+        content: '';
+        display: block;
+        border-left: 2px solid #BDBDBD;
+        width: 0;
+        height: 15px;
+        z-index: 1;
+        margin-left: 11px;
+      }
+
+      .drawer-list div::first-of-type i::before,
+      .drawer-list div::first-of-type i::after {
+        display: none;
+      }
+
+      .drawer-list div > span {
+        color: #212121;
+        font-weight: 600;
       }
     </style>
 
-    <app-location route="{{route}}"></app-location>
+    <app-location route="{{route}}" use-hash-as-path></app-location>
     <app-route
         route="{{route}}"
-        pattern="/:page"
+        pattern="/BenoitClaveau/quizz/:page"
         data="{{routeData}}"
         tail="{{subroute}}"></app-route>
 
     <app-drawer-layout fullbleed>
       <!-- Drawer content -->
       <app-drawer>
-        <app-toolbar>Menu</app-toolbar>
-        <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="view1" href="/view1">View One</a>
-          <a name="view2" href="/view2">View Two</a>
-          <a name="view3" href="/view3">View Three</a>
+        <app-toolbar>Questions</app-toolbar>
+        <iron-selector id="selector" selected="[[route.path]]" attr-for-selected="name" class="drawer-list" role="navigation">
+          <template is="dom-repeat" items="{{pages}}">
+            <div name="{{item.name}}"><i>{{item.index}}</i><span>{{item.name}}</span></div>
+          </template>
         </iron-selector>
       </app-drawer>
 
@@ -87,52 +117,123 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <app-header condenses reveals effects="waterfall">
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-            <div main-title>My App</div>
+            <!-- a modifier -->
+            <div main-title>Quizz</div>
           </app-toolbar>
         </app-header>
 
-        <iron-pages
-            selected="[[page]]"
+        <iron-pages id="pages"
+            selected="[[route.path]]"
             attr-for-selected="name"
-            fallback-selection="view404"
             role="main">
-          <my-view1 name="view1"></my-view1>
-          <my-view2 name="view2"></my-view2>
-          <my-view3 name="view3"></my-view3>
-          <my-view404 name="view404"></my-view404>
+          
+          <pages-welcome name="Welcome"
+                         title="Quizz"
+                         message="Quelle est votre niveau ?">
+          </pages-welcome>
+
+          <radio-group name="Q1"
+                       question="Que veut dire GCL ?"
+                       propositions='[
+                        {"id": "a", "name": "Gallinette Cendrée du Limousin"},
+                        {"id": "b", "name": "Gestion de Configuration Logicielle"}
+                       ]'
+                       response="b",
+                       message="GCL signifie Gestion de Configuration Logicielle.">
+          </radio-group>
+
+          <checkbox-group name="Q2"
+                       question="Quels sont les chapîtres abordés dans le PGCL ?"
+                       propositions='[
+                        {"id": "a", "name": "Lu/00027organisation"},
+                        {"id": "b", "name": "Auditer"},
+                        {"id": "c", "name": "Historiser"}
+                       ]'
+                       response='["a", "b"]',
+                       message="Organiser et auditer.">
+          </checkbox-group>
+
+          <page-score name="score" data="{{results}}"></page-score>
+          <page-response name="response" data="{{results}}"></page-response>
         </iron-pages>
       </app-header-layout>
     </app-drawer-layout>
+
+    <paper-dialog id="modal">
+       <p>Votre questionnaire n'est pas complet !</p>
+       <div class="buttons">
+         <paper-button dialog-confirm autofocus>fermer</paper-button>
+       </div>
+     </paper-dialog>
   </template>
 
   <script>
     Polymer({
       is: 'my-app',
-
       properties: {
-        page: {
-          type: String,
-          reflectToAttribute: true,
-          observer: '_pageChanged'
+        page: String,
+        pages: Array,
+        results: {
+          type: Array,
+          value: function() {return [];}
         }
       },
-
       observers: [
-        '_routePageChanged(routeData.page)'
+        '_routeChanged(route.*)'
       ],
-
-      _routePageChanged: function(page) {
-        this.page = page || 'view1';
+      _routeChanged: function(changeRecord) {
+        if (changeRecord.path === 'route' && changeRecord.value.path === "") this.set('route.path', "welcome");
       },
-
-      _pageChanged: function(page) {
-        // Load page import on demand. Show 404 page if fails
-        var resolvedPageUrl = this.resolveUrl('my-' + page + '.html');
-        this.importHref(resolvedPageUrl, null, this._showPage404, true);
+      attached: function() {
+        this.async(function(){
+          this.pages = this.$.pages.items.filter(function(e) { return e.tagName == "RADIO-GROUP" || e.tagName == "CHECKED-GROUP"; }).map(function(e, i) {
+            e.setAttribute('index', i);
+            return {
+              index: i,
+              name: getAttribute("name")
+            }
+          })
+        });
       },
+      ready: function() {
+        this.$.selector.activateEvent = null; //desactivate click
 
-      _showPage404: function() {
-        this.page = 'view404';
+        this.addEventListener("on-next", function(e) {
+          var index = this.$.pages.indexOf(this.$.pages.selectedItems) + 1;
+          var next = this.$.pages.items[index];
+          var name = next.getAttribute("name");
+
+          if (e.detail && e.detail.index) {
+            var i = e.detail.index - 1;
+            var item = this.results[i];
+            if (item) this.set('results.' + i, e.detail);
+            else this.splice("results", i, 0, e.detail);
+          }
+          if (name == "score" && (this.results.length < this.pages.length)) {
+            this.$.modal.open();
+            return;
+          }
+          this.set('route.path', name);
+        }.bind(this));
+
+        this.addEventListener("on-previous", function(e) {
+          var index = this.$.pages.indexOf(this.$.pages.selectedItems) - 1;
+          var next = this.$.pages.items[index];
+          var name = next.getAttribute("name");
+          this.set('route.path', name);
+        }.bind(this));
+
+        this.addEventListener("on-restart", function(e) {
+          var next = this.$.pages.items[0];
+          var name = next.getAttribute("name");
+          this.set('route.path', name);
+        }.bind(this));
+
+        this.addEventListener("on-start", function(e) {
+          var next = this.$.pages.items[1];
+          var name = next.getAttribute("name");
+          this.set('route.path', name);
+        }.bind(this));
       }
     });
   </script>

@@ -1,0 +1,90 @@
+<link rel="import" href="my-app.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="checkbox-group">
+  <template>
+    <style include="shared-styles">
+      paper-checkbox {
+        --paper-checkbox-checked-color: var(--paper-blue-500);
+        --paper-checkbox-checked-ink-color: var(--paper-blue-500);
+        --paper-checkbox-unchecked-color: var(--paper-blue-900);
+        --paper-checkbox-unchecked-ink-color: var(--paper-blue-900);
+        --paper-checkbox-label-color: var(--paper-grey-600);
+        --paper-checkbox-label-checked-color: var(--paper-grey-600);
+      }
+    </style>
+
+    <div class="card">
+      <div class="circle">[[index]]</div>
+      <h2>[[question]]</h2>
+     
+     <div id="list" class="layout vertical">
+       <template is="dom-repeat" items="{{propositions}}">
+         <paper-checkbox name="{{item.id}}">{{item.name}}</paper-checkbox>
+       </template>
+     </div>
+
+     <p></p>
+
+     <div class="layout horizontal flex">
+       <template is="dom-if" if="{{_visible(index)}}">
+         <paper-button raised class="indigo" on-tap="onPrevious">précédent</paper-button>
+       </template>
+       <span class="flex"></span>
+       <paper-button raised class="indigo" on-tap="onNext">suivant</paper-button>
+     </div>
+
+     <paper-dialog id="modal">
+       <p>Votre réponse n'a pas été prise en compte</p>
+       <div class="buttons">
+         <paper-button dialog-confirm autofocus>fermer</paper-button>
+       </div>
+     </paper-dialog>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'checkbox-group',
+      properties: {
+        index: Number,
+        question: String,
+        propositions: Array,
+        responses: Array,
+        message: String
+      },
+      _visible: function (index) {
+        return index > 1;
+      },
+      onNext: function() {
+        var nodes = Polymer.dom(this.$.list).querySelectorAll("paper-checkbox");
+
+        if (!nodes.some(function(e) { return e.checked; })) {
+          this.$modal.open();
+          return;
+        }
+
+        var success = true;
+        nodes.forEach(function(e) {
+          var some = this.responses.some(function(n) {
+            return e.name == n;
+          })
+        }.bind(this));
+
+        this.fire("on-next", {
+          index: this.index,
+          question: this.question,
+          success: success,
+          response: nodes.filter(function(e) { return e.checked; }).map(function(e) {
+            return e.textContent.trim().replace(/(\.|\!])$/, '');
+          }).join(", "),
+          message: this.message
+        });
+      },
+      onPrevious: function() {
+        this.fire("on-previous", {
+          index: this.index
+        });
+      )
+    });
+  </script>
+</dom-module>

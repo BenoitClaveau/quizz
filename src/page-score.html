@@ -1,0 +1,45 @@
+<link rel="import" href="my-app.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="page-score">
+  <template>
+    <style include="shared-styles"></style>
+
+    <div class="card">
+      <h1>Bravo !</h1>
+      <p>Vous avez terminé le questionnaire.</p>
+      <p>Votre score est de <strong>{{success}}/{{data.length}}</strong></p>
+    </div>
+
+     <p></p>
+
+     <div class="layout horizontal flex margin-flex">
+        <paper-button raised class="indigo" on-tap="onNext">Afficher les résultats</paper-button>
+     </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'page-score',
+      properties: {
+        data: {
+            type: Array,
+            value: function() {return [];}
+        },
+        success: {
+            type: Array,
+            value: function() {return 0;}
+        }
+      },
+      observers: [
+        'updateData(data.*)'
+      ],
+      updateData: function(data) {
+        this.success = data.base.filter(function(e) { return e.success; }).length;
+      },
+      onNext: function () {
+        this.fire("on-next", {});
+      }
+    });
+  </script>
+</dom-module>
