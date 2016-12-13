@@ -186,7 +186,7 @@
       attached: function() {
         this.async(function(){
           this.pages = this.$.pages.items.filter(function(e) { return e.tagName == "RADIO-GROUP" || e.tagName == "CHECKED-GROUP"; }).map(function(e, i) {
-            e.setAttribute('index', i);
+            e.setAttribute('index', ++i);
             return {
               index: i,
               name: e.getAttribute("name")
