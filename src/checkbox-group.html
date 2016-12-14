@@ -3,7 +3,8 @@
 
 <dom-module id="checkbox-group">
   <template>
-    <style include="shared-styles">
+    <style include="shared-styles"></style>
+    <style>
       paper-checkbox {
         padding: 8px;
         --paper-checkbox-checked-color: var(--paper-blue-500);
@@ -50,10 +51,7 @@
         index: Number,
         question: String,
         propositions: Array,
-        responses: {
-          type: Array,
-          value: []
-        },
+        responses: Array,
         message: String
       },
       _visible: function (index) {
