@@ -204,7 +204,7 @@
         this.$.selector.activateEvent = null; //desactivate click
 
         this.addEventListener("on-next", function(e) {
-          var index = this.$.pages.indexOf(this.$.pages.selectedItems) + 1;
+          var index = this.$.pages.indexOf(this.$.pages.selectedItem) + 1;
           var next = this.$.pages.items[index];
           var name = next.getAttribute("name");
 
@@ -222,7 +222,7 @@
         }.bind(this));
 
         this.addEventListener("on-previous", function(e) {
-          var index = this.$.pages.indexOf(this.$.pages.selectedItems) - 1;
+          var index = this.$.pages.indexOf(this.$.pages.selectedItem) - 1;
           var next = this.$.pages.items[index];
           var name = next.getAttribute("name");
           this.set('route.path', name);
