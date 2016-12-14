@@ -50,7 +50,10 @@
         index: Number,
         question: String,
         propositions: Array,
-        responses: Array,
+        responses: {
+          type: Array,
+          value: []
+        },
         message: String
       },
       _visible: function (index) {
@@ -68,7 +71,9 @@
         nodes.forEach(function(e) {
           var some = this.responses.some(function(n) {
             return e.name == n;
-          })
+          });
+
+          success = success && ((!e.checked && !some) || (e.checked && some));
         }.bind(this));
 
         this.fire("on-next", {
