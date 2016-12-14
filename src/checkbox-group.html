@@ -61,7 +61,7 @@
         var nodes = Polymer.dom(this.$.list).querySelectorAll("paper-checkbox");
 
         if (!nodes.some(function(e) { return e.checked; })) {
-          this.$modal.open();
+          this.$.modal.open();
           return;
         }
 
